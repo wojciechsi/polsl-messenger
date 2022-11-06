@@ -11,16 +11,19 @@ import java.io.PipedWriter;
 import java.util.Scanner;
 
 import pl.polsl.wojciech.siudy.messenger.controller.MessagesFetcher;
+import pl.polsl.wojciech.siudy.messenger.controller.MessegesSender;
 import pl.polsl.wojciech.siudy.messenger.controller.SessionController;
 import pl.polsl.wojciech.siudy.messenger.model.*;
 import pl.polsl.wojciech.siudy.messenger.view.SessionView;
+
+import static pl.polsl.wojciech.siudy.messenger.view.MessageEdit.makeMessage;
 
 /**
  *
  * @author SuperStudent.PL
  */
 public class Messenger {
-
+    private static SessionController sessionCtrl;
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         System.out.println("Welcome to messenger!");
         System.out.println("Enter your name:");
@@ -33,7 +36,7 @@ public class Messenger {
         System.out.println("Pick a port to serve:");
         Integer portOut = scanner.nextInt();
 
-        SessionController sessionCtrl =
+        sessionCtrl =
                 new SessionController(new Session(new User(name), address, portIn, portOut), new SessionView());
 
         sessionCtrl.updateView();
@@ -41,25 +44,20 @@ public class Messenger {
         Runnable fetcher = new MessagesFetcher(sessionCtrl.getSession());
         new Thread(fetcher).start();
 
-        System.out.println("Enter mode [1 - send / 2 - receive]:");
-        Integer mode = scanner.nextInt();
-
-        if (mode == 1) {
-           sessionCtrl.messageSend();
-        } else if (mode == 2) {
-            System.out.println(sessionCtrl.getSession().getInbox().getLast().getContent());
-            if (scanner.nextInt() == 5) {
-                System.out.println(sessionCtrl.getSession().getInbox().getLast().getContent());
-            }
+        System.out.println("Peer ready? [y/n]");
+        String peerReady = "no";
+        while (!peerReady.equals("y")) {
+            peerReady = scanner.nextLine();
         }
 
-        //Menu.run(session);
 
+        Runnable sender = new MessegesSender(sessionCtrl.getSession());
+        new Thread(sender).start();
+
+        run(sessionCtrl.getSession());
 
     }
-}
 
-class Menu {
     private static boolean validateOption(Integer chosen) {
         if (chosen > 0 && chosen < 4) {
             return true;
@@ -79,13 +77,18 @@ class Menu {
             option = scanner.nextInt();
             if (validateOption(option)) {
                 if (option == 1) {
-                    //@todo
+                    sessionCtrl.displayLastMessage();
                 }
                 else if (option == 2) {
-                    //MessageSender sender = new MessageSender(session);
+                    sessionCtrl.sendMessage(new Message(sessionCtrl.getSession().getCurrentUser(), makeMessage()));
+                }
+                else if (option == 3) {
+                    session.shutdown();
                 }
             }
         }
+        System.out.println("Bye!");
     }
+
 
 }

@@ -1,15 +1,22 @@
 package pl.polsl.wojciech.siudy.messenger.model;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 public class Session {
     private User currentUser;
     private String address;
     private Integer portIn, portOut;
 
-    private LinkedList<Message> inbox;
+    private LinkedList<Message> inbox, outbox;
+    boolean alive = true;
+
+    public boolean isAlive() {
+        return alive;
+    }
+
+    public void shutdown() {
+        this.alive = false;
+    }
 
     public Session(User currentUser, String address, Integer portIn, Integer portOut) {
         this.currentUser = currentUser;
@@ -17,6 +24,7 @@ public class Session {
         this.portIn = portIn;
         this.portOut = portOut;
         this.inbox = new LinkedList<Message>();
+        this.outbox = new LinkedList<Message>();
     }
 
     public String getAddress() {
@@ -38,7 +46,33 @@ public class Session {
     public LinkedList<Message> getInbox() {
         return inbox;
     }
-    public synchronized void addMessage (Message message){
+    public synchronized void addMessageToInbox(Message message){
         inbox.add(message);
+    }
+
+    public synchronized void addMessageToOutbox(Message message){
+        outbox.add(message);
+    }
+
+    public synchronized Message getMessageToSend () {
+            return outbox.pop();
+    }
+
+    public synchronized boolean anyMessagesToSend() {
+        if (outbox.isEmpty()) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    public synchronized boolean anyMessages () {
+        if (inbox.isEmpty()) {
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 }

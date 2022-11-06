@@ -3,6 +3,7 @@ package pl.polsl.wojciech.siudy.messenger.controller;
 import pl.polsl.wojciech.siudy.messenger.model.Message;
 import pl.polsl.wojciech.siudy.messenger.model.Session;
 import pl.polsl.wojciech.siudy.messenger.model.User;
+import pl.polsl.wojciech.siudy.messenger.view.MessageView;
 import pl.polsl.wojciech.siudy.messenger.view.SessionView;
 
 import java.io.IOException;
@@ -41,23 +42,20 @@ public class SessionController {
         view.displaySessionInfo(getUser(), getAddress(), getPortIn(), getPortOut());
     }
 
+    public void displayLastMessage() {
+        if (model.anyMessages()) {
+            MessageView msgView = new MessageView();
+            MessageController msgCtrl = new MessageController(model.getInbox().getLast(), msgView);
+            msgCtrl.updateView();
+        }
+    }
+
     public Session getSession() {
         return model;
     }
 
-    public void messageSend () throws IOException {
-        Socket socket = new Socket(model.getAddress(), model.getPortOut());
-        ObjectOutputStream o = new ObjectOutputStream(socket.getOutputStream());
-        String message = "";
-        while (!message.equals("over")) {
-            Scanner scanner = new Scanner(System.in);
-            message = scanner.nextLine();
-            Message msg = new Message(new User("autor"), message);
-            o.writeUnshared(msg);
-            o.flush();
-        }
-        o.close();
-        socket.close();
+    public void sendMessage (Message message) {
+        model.addMessageToOutbox(message);
     }
 
 }

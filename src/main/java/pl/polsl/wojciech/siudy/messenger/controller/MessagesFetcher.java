@@ -5,7 +5,6 @@ import pl.polsl.wojciech.siudy.messenger.model.Session;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.PipedReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -22,12 +21,12 @@ public class MessagesFetcher implements Runnable{
         try {
             ServerSocket server = new ServerSocket(session.getPortIn());
             Socket socket = server.accept();
-            String str = "";
             ObjectInputStream o = new ObjectInputStream(socket.getInputStream());
-            while (!str.equals("over")) {
-                session.addMessage((Message)o.readObject());
+            while (session.isAlive()) {
+                session.addMessageToInbox((Message)o.readObject());
             }
             socket.close();
+            server.close();
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
