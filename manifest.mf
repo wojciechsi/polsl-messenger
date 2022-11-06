@@ -1,0 +1,1 @@
+Main-Class: pl.polsl.wojciech.siudy.messenger.Messenger

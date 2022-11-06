@@ -11,28 +11,15 @@ import java.util.Date;
  * @author SuperStudent.PL
  */
 public class Message {
-    private User author = null;
+    private User author;
     private String content = null;
     private Date date = null;
 
-    public Message() {
-
-    }
-
-    
     public Message(User author, String content) {
         this.author = author;
         this.content = content;
         this.date = new Date();
     }
-
-    public Message(Message another) {
-        this.author = another.getAuthor();
-        this.content = another.getContent();
-        this.date = another.getDate();
-    }
-
-
 
     public User getAuthor() {
         return author;
@@ -57,6 +44,5 @@ public class Message {
     public void setDate(Date date) {
         this.date = date;
     }
-    
-    
+
 }

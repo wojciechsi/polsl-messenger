@@ -9,23 +9,23 @@ package pl.polsl.wojciech.siudy.messenger.model;
  * @author SuperStudent.PL
  */
 public class User {
-    private String login;
+    private String name;
 
     public User() {
     }
 
     
     
-    public User(String login) {
-        this.login = login;
+    public User(String name) {
+        this.name = name;
     }
 
-    public String getLogin() {
-        return login;
+    public String getName() {
+        return name;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setName(String name) {
+        this.name = name;
     }
     
     
