@@ -4,17 +4,14 @@
  */
 package pl.polsl.wojciech.siudy.messenger.model;
 
+import java.io.Serializable;
+
 /**
  *
  * @author SuperStudent.PL
  */
-public class User {
+public class User implements Serializable {
     private String name;
-
-    public User() {
-    }
-
-    
     
     public User(String name) {
         this.name = name;

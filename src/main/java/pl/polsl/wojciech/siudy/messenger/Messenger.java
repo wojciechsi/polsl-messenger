@@ -6,11 +6,11 @@
 package pl.polsl.wojciech.siudy.messenger;
 
 import java.io.IOException;
+import java.io.PipedReader;
+import java.io.PipedWriter;
 import java.util.Scanner;
 
-import pl.polsl.wojciech.siudy.messenger.controller.MessageController;
-import pl.polsl.wojciech.siudy.messenger.controller.MessageListener;
-import pl.polsl.wojciech.siudy.messenger.controller.MessageSender;
+import pl.polsl.wojciech.siudy.messenger.controller.MessagesFetcher;
 import pl.polsl.wojciech.siudy.messenger.controller.SessionController;
 import pl.polsl.wojciech.siudy.messenger.model.*;
 import pl.polsl.wojciech.siudy.messenger.view.SessionView;
@@ -21,7 +21,7 @@ import pl.polsl.wojciech.siudy.messenger.view.SessionView;
  */
 public class Messenger {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
         System.out.println("Welcome to messenger!");
         System.out.println("Enter your name:");
         Scanner scanner = new Scanner(System.in);
@@ -33,21 +33,25 @@ public class Messenger {
         System.out.println("Pick a port to serve:");
         Integer portOut = scanner.nextInt();
 
-        SessionController sessionCtrl = new SessionController(new Session(new User(name), address, portIn, portOut), new SessionView());
+        SessionController sessionCtrl =
+                new SessionController(new Session(new User(name), address, portIn, portOut), new SessionView());
 
         sessionCtrl.updateView();
+
+        Runnable fetcher = new MessagesFetcher(sessionCtrl.getSession());
+        new Thread(fetcher).start();
 
         System.out.println("Enter mode [1 - send / 2 - receive]:");
         Integer mode = scanner.nextInt();
 
         if (mode == 1) {
-            MessageSender sender = new MessageSender(sessionCtrl.getAddress(), sessionCtrl.getPortOut());
+           sessionCtrl.messageSend();
         } else if (mode == 2) {
-            MessageListener listener = new MessageListener(sessionCtrl.getPortIn());
+            System.out.println(sessionCtrl.getSession().getInbox().getLast().getContent());
+            if (scanner.nextInt() == 5) {
+                System.out.println(sessionCtrl.getSession().getInbox().getLast().getContent());
+            }
         }
-
-        sessionCtrl.updateView();
-        //delegate listener
 
         //Menu.run(session);
 
@@ -68,7 +72,7 @@ class Menu {
         Integer option = 1;
         while (option != 3) {
             System.out.println("Pick an option:\n" +
-                    "1) Serve last message\n" +
+                    "1) Check last message\n" +
                     "2) Send a message\n" +
                     "3) Exit");
             Scanner scanner = new Scanner(System.in);

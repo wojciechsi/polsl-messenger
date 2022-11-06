@@ -1,11 +1,9 @@
 package pl.polsl.wojciech.siudy.messenger.controller;
 
-import pl.polsl.wojciech.siudy.messenger.Messenger;
 import pl.polsl.wojciech.siudy.messenger.model.Message;
 import pl.polsl.wojciech.siudy.messenger.model.User;
 import pl.polsl.wojciech.siudy.messenger.view.MessageView;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 public class MessageController {
