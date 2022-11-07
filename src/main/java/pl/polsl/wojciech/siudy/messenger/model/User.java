@@ -7,23 +7,24 @@ package pl.polsl.wojciech.siudy.messenger.model;
 import java.io.Serializable;
 
 /**
- *
- * @author SuperStudent.PL
+ * Class holding information about user sending messages.
  */
 public class User implements Serializable {
     private String name;
-    
+
+    /**
+     * Class constructor
+     * @param name signature of user
+     */
     public User(String name) {
         this.name = name;
     }
 
+    /**
+     * Method returning name of current user.
+     * @return name
+     */
     public String getName() {
         return name;
     }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-    
-    
 }
