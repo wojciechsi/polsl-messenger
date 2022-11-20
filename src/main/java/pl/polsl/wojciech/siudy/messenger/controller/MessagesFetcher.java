@@ -34,21 +34,21 @@ public class MessagesFetcher implements Runnable{
             ServerSocket server = new ServerSocket(session.getPortIn());
             Socket socket = server.accept();
             ObjectInputStream o = new ObjectInputStream(socket.getInputStream());
-            while (session.isAlive() && socket.isConnected()) {
+            while (session.isAlive()) {
                 session.addMessageToInbox((Message)o.readObject());
             }
             //End all connections
-            session.shutdown();
             o.close();
             socket.shutdownInput();
             socket.close();
             server.close();
-        } catch (IOException | ClassNotFoundException e) {
-            System.out.println("Fetcher failure. " + e.getMessage());
+        } catch (IOException e) {
+            System.out.println("Fetcher failed. " + e.getMessage());
+        } catch (ClassNotFoundException e) {
+            System.out.println("Incompatible peer" + e.getMessage());
+        } finally {
             session.shutdown();
         }
-
-
-
+        System.out.println("Fetcher closed.");
     }
 }

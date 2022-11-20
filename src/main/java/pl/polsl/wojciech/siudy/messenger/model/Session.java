@@ -1,6 +1,7 @@
 package pl.polsl.wojciech.siudy.messenger.model;
 
 import java.util.LinkedList;
+import java.util.Vector;
 
 /**
  * Class holding current application session data and configuration.
@@ -12,8 +13,8 @@ public class Session {
     private User currentUser;
     private String address;
     private Integer portIn, portOut;
-
-    private LinkedList<Message> inbox, outbox;
+    private Vector<Message> inbox;
+    private LinkedList<Message> outbox;
     boolean alive = true;
 
     /**
@@ -43,7 +44,7 @@ public class Session {
         this.address = address;
         this.portIn = portIn;
         this.portOut = portOut;
-        this.inbox = new LinkedList<Message>();
+        this.inbox = new Vector<Message>();
         this.outbox = new LinkedList<Message>();
     }
 
@@ -83,8 +84,16 @@ public class Session {
      * Method returning linked-list of received messages.
      * @return inbox
      */
-    public LinkedList<Message> getInbox() {
+    public Vector<Message> getInbox() {
         return inbox;
+    }
+
+    /**
+     * Method returning linked-list of received messages.
+     * @return inbox
+     */
+    public LinkedList<Message> getOutbox() {
+        return outbox;
     }
 
     /**

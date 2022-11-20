@@ -40,11 +40,13 @@ public class Messenger {
         }
 
         //start sending socket
-        Runnable sender = new MessegesSender(sessionCtrl.getSession());
+        Runnable sender = new MessagesSender(sessionCtrl.getSession());
         new Thread(sender).start();
 
         //run application menu
         run(sessionCtrl.getSession());
+
+        //close servers
 
     }
 
@@ -61,14 +63,14 @@ public class Messenger {
         while (option != 3) {
             //serve menu
             System.out.println("Pick an option:\n" +
-                    "1) Check last message\n" +
+                    "1) Read messages\n" +
                     "2) Send a message\n" +
                     "3) Exit");
             Scanner scanner = new Scanner(System.in);
             option = scanner.nextInt();
             if (validateOption(option)) {
                 if (option == 1) {
-                    sessionCtrl.displayLastMessage();
+                    sessionCtrl.displayMessages();
                 }
                 else if (option == 2) {
                     sessionCtrl.sendMessage(new Message(sessionCtrl.getSession().getCurrentUser(), makeMessage()));
@@ -80,6 +82,4 @@ public class Messenger {
         }
         System.out.println("Bye!");
     }
-
-
 }
