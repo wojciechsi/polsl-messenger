@@ -1,8 +1,8 @@
 package pl.polsl.wojciech.siudy.messenger.model;
 
-import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -26,17 +26,41 @@ class SessionTest {
         Message message = new Message(user, contentOfMessage);
         //WHEN
         session.addMessageToInbox(message);
-        String actualValue = session.getInbox().toArray()[0].toString();
+        String actualValue = session.getInbox().lastElement().getContent();
         //THEN
         assertEquals(contentOfMessage, actualValue, "Message not added to inbox");
     }
 
-    @Test
-    void testAddMessageToOutbox() {
+    @ParameterizedTest
+    @ValueSource(strings = {"Hello", "Cześć"})
+    void testAddMessageToOutbox(String contentOfMessage) {
+        //GIVEN
+        Message message = new Message(user, contentOfMessage);
+        //WHEN
+        session.addMessageToOutbox(message);
+        String actualValue = session.getOutbox().getLast().getContent();
+        //THEN
+        assertEquals(contentOfMessage, actualValue, "Message not added to inbox");
     }
 
-    @Test
-    void TestGetMessageToSend() {
+    interface VoidWithException extends Executable {
+        @Override
+        void execute() throws Throwable;
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"Hello", "Cześć"})
+    void TestGetMessageToSend(String contentOfMessage) {
+        VoidWithException DoGetMessageToSend = () -> session.getMessageToSend();
+        //GIVEN
+        Message message = new Message(user, contentOfMessage);
+        //THEN
+        assertThrows(EmptyBoxException.class, DoGetMessageToSend);
+        //WHEN
+        session.addMessageToOutbox(message);
+        String actualValue = session.getOutbox().getLast().getContent();
+        //THEN
+        assertEquals(contentOfMessage, actualValue, "Message not added to inbox");
     }
 
     @Test
@@ -46,7 +70,6 @@ class SessionTest {
         boolean ifMessages = session.anyMessages();
         //THEN
         assertFalse(ifMessages);
-
         //GIVEN
         Message message = new Message(user, "Test message");
         //WHEN

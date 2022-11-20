@@ -61,14 +61,25 @@ public class SessionController {
         view.displaySessionInfo(getUser(), getAddress(), getPortIn(), getPortOut());
     }
 
+
     /**
-     * Method pushing latest message to frontend.
+     * Method pushing message to frontend
+     * @param m
      */
-    public void displayLastMessage() {
+    private void getAndServeMessage(Message m) {
+        MessageView msgView = new MessageView();
+        MessageController msgCtrl = new MessageController(m, msgView);
+        msgCtrl.updateView();
+    }
+
+    /**
+     * Method pushing all incoming messages to frontend
+     */
+    public void displayMessages() {
         if (model.anyMessages()) {
-            MessageView msgView = new MessageView();
-            MessageController msgCtrl = new MessageController(model.getInbox().getLast(), msgView);
-            msgCtrl.updateView();
+            for (Message m : model.getInbox()) {
+                getAndServeMessage(m);
+            }
         }
     }
 
@@ -86,6 +97,7 @@ public class SessionController {
      */
     public void sendMessage (Message message) {
         model.addMessageToOutbox(message);
+        model.addMessageToInbox(message);
     }
 
 }

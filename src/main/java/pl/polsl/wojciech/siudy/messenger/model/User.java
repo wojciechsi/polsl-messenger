@@ -29,6 +29,14 @@ public class User implements Serializable {
     }
 
     /**
+     * Method changing user name
+     * @param newName to apply
+     */
+    public void setName(String newName) {
+        name = newName;
+    }
+
+    /**
      * Method returning information if name doesn't include spaces
      * @return if spaces
      */
