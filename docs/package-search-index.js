@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"pl.polsl.wojciech.siudy.messenger"},{"l":"pl.polsl.wojciech.siudy.messenger.controller"},{"l":"pl.polsl.wojciech.siudy.messenger.model"},{"l":"pl.polsl.wojciech.siudy.messenger.view"}];updateSearchResults();
