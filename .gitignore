@@ -1,2 +1,5 @@
 maven*/
 target/
+docs/
+*.zip
+*.class

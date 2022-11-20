@@ -11,7 +11,7 @@ import java.net.Socket;
  * Class providing sending functionality.
  * Runs in own thread and fetches messages to send from Session object.
  */
-public class MessegesSender implements Runnable {
+public class MessagesSender implements Runnable {
 
     private final Session session;
 
@@ -19,12 +19,12 @@ public class MessegesSender implements Runnable {
      * Class constructor
      * @param session application data holder
      */
-    public MessegesSender(Session session) {
+    public MessagesSender(Session session) {
         this.session = session;
     }
 
     /**
-     * Method sending messeges through web socket.
+     * Method sending messages through web socket.
      */
     @Override
     public void run() {
@@ -38,18 +38,19 @@ public class MessegesSender implements Runnable {
                     o.flush();
                 }
                 catch (EmptyBoxException e) {
-                    //do nothing
+                    //nothing to send
                 }
             }
             //close connections
-            session.shutdown();
             o.close();
             socket.shutdownOutput();
             socket.close();
         } catch (IOException e) {
             System.out.println("Sender failed. " + e.getMessage());
+        } finally {
             session.shutdown();
         }
+        System.out.println("Sender closed.");
     }
 }
 

@@ -1,6 +1,5 @@
 package pl.polsl.wojciech.siudy.messenger.view;
 
-
 import java.util.Date;
 import java.util.Scanner;
 

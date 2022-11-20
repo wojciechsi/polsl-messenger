@@ -27,4 +27,17 @@ public class User implements Serializable {
     public String getName() {
         return name;
     }
+
+    /**
+     * Method returning information if name doesn't include spaces
+     * @return if spaces
+     */
+    public boolean nameIsOneWord () {
+        String tmpName = name.replace(" ", "");
+        if (tmpName.equals(name)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
