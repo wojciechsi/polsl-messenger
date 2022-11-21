@@ -29,4 +29,5 @@ public class MessageView {
         String content = scanner.nextLine();
         return content;
     }
+
 }

@@ -32,6 +32,15 @@ public class Session {
         this.alive = false;
     }
 
+    public Session() {
+        this.currentUser = null;
+        this.address = null;
+        this.portIn = null;
+        this.portOut = null;
+        this.inbox = new Vector<Message>();
+        this.outbox = new LinkedList<Message>();
+    }
+
     /**
      * Class constructor with full specification.
      * @param currentUser name used as a message signature
@@ -46,6 +55,22 @@ public class Session {
         this.portOut = portOut;
         this.inbox = new Vector<Message>();
         this.outbox = new LinkedList<Message>();
+    }
+
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setPortIn(Integer portIn) {
+        this.portIn = portIn;
+    }
+
+    public void setPortOut(Integer portOut) {
+        this.portOut = portOut;
     }
 
     /**

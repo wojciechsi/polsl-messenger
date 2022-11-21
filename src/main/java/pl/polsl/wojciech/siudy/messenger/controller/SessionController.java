@@ -2,6 +2,7 @@ package pl.polsl.wojciech.siudy.messenger.controller;
 
 import pl.polsl.wojciech.siudy.messenger.model.Message;
 import pl.polsl.wojciech.siudy.messenger.model.Session;
+import pl.polsl.wojciech.siudy.messenger.model.User;
 import pl.polsl.wojciech.siudy.messenger.view.MessageView;
 import pl.polsl.wojciech.siudy.messenger.view.SessionView;
 
@@ -61,6 +62,12 @@ public class SessionController {
         view.displaySessionInfo(getUser(), getAddress(), getPortIn(), getPortOut());
     }
 
+    public void setController(String username, String address, Integer portIn, Integer portOut) {
+        model.setCurrentUser(new User(username));
+        model.setAddress(address);
+        model.setPortIn(portIn);
+        model.setPortOut(portOut);
+    }
 
     /**
      * Method pushing message to frontend
@@ -83,6 +90,8 @@ public class SessionController {
         }
     }
 
+
+
     /**
      * Method giving access to session placeholder.
      * @return session
@@ -98,6 +107,10 @@ public class SessionController {
     public void sendMessage (Message message) {
         model.addMessageToOutbox(message);
         model.addMessageToInbox(message);
+    }
+
+    public void sendMessage(String content) {
+        sendMessage(new Message(model.getCurrentUser(), content));
     }
 
 }

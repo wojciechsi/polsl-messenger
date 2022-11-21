@@ -12,6 +12,7 @@ import static pl.polsl.wojciech.siudy.messenger.view.MessageView.makeMessage;
 public class Messenger {
     private static SessionController sessionCtrl;
     public static void main(String[] args) throws IOException, ClassNotFoundException {
+        /*
         System.out.println("Welcome to messenger!");
         System.out.println("Enter your name:");
         Scanner scanner = new Scanner(System.in);
@@ -22,10 +23,15 @@ public class Messenger {
         Integer portIn = scanner.nextInt();
         System.out.println("Pick a port to serve:");
         Integer portOut = scanner.nextInt();
+           */
 
-        //apply entered configuration
         sessionCtrl =
-                new SessionController(new Session(new User(name), address, portIn, portOut), new SessionView());
+                new SessionController(new Session(), new SessionView());
+
+        ConfigureSession dialog = new ConfigureSession(sessionCtrl);
+        dialog.pack();
+        dialog.setVisible(true);
+
         sessionCtrl.updateView();
 
         //start incoming messages socket server
@@ -33,15 +39,25 @@ public class Messenger {
         new Thread(fetcher).start();
 
         //wait till peer is ready
+        /*
+        Scanner scanner = new Scanner(System.in);
         System.out.println("Peer ready? [y/n]");
         String peerReady = "no";
         while (!peerReady.equals("y")) {
             peerReady = scanner.nextLine();
         }
+         */
+        PeerReadyCheck peerReadyDialog = new PeerReadyCheck();
+        peerReadyDialog.pack();
+        peerReadyDialog.setVisible(true);
 
         //start sending socket
         Runnable sender = new MessagesSender(sessionCtrl.getSession());
         new Thread(sender).start();
+
+        MessagesManager dialogMessages = new MessagesManager(sessionCtrl);
+        dialogMessages.pack();
+        dialogMessages.setVisible(true);
 
         //run application menu
         run(sessionCtrl.getSession());
