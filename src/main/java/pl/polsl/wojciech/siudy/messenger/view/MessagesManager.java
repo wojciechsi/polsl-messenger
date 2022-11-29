@@ -1,42 +1,41 @@
 package pl.polsl.wojciech.siudy.messenger.view;
 
-import pl.polsl.wojciech.siudy.messenger.controller.SessionController;
+import pl.polsl.wojciech.siudy.messenger.Exceptions.EmptyBoxException;
 
 import javax.swing.*;
 import java.awt.event.*;
+import java.util.LinkedList;
+
 
 public class MessagesManager extends JDialog {
+
     private JPanel contentPane;
     private JButton buttonSEND;
     private JFormattedTextField messageField;
     private JButton buttonEXIT;
-    private JButton buttonFETCH;
-    private JLabel messages;
-    private SessionController sessionCtrl;
+    private JTable inboxTable;
+    private JScrollPane inboxScroll = new JScrollPane(inboxTable);
 
-    public MessagesManager(SessionController _session) {
-        sessionCtrl = _session;
+    private LinkedList<String> sendingQueue, displayingList;
 
+    public MessagesManager() {
+        sendingQueue = new LinkedList();
+        displayingList = new LinkedList();
+
+        //prepare window
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonSEND);
 
         buttonSEND.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                onSEND();
+                onSend();
             }
         });
 
         buttonEXIT.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                onCancel();
-            }
-        });
-
-        buttonFETCH.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                onFetch();
+                onExit();
             }
         });
 
@@ -44,29 +43,40 @@ public class MessagesManager extends JDialog {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                onCancel();
+                onExit();
             }
         });
 
         // call onCancel() on ESCAPE
         contentPane.registerKeyboardAction(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                onCancel();
+                onExit();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
 
-    private void onSEND() {
-        sessionCtrl.sendMessage(messageField.getText());
+    private void onSend() {
+        pushMessage(messageField.getText());
+        messageField.setValue("");
+    }
+
+    private void onExit() {
+        //sessionCtrl.endSession();
         dispose();
     }
 
-    private void onCancel() {
-        // add your code here if necessary
-        dispose();
+    private void pushMessage(String content) {
+        sendingQueue.add(content);
     }
 
-    private void onFetch(){
+    public String takeMessageToSend() throws EmptyBoxException {
+        if (sendingQueue.isEmpty()) {
+            throw new EmptyBoxException();
+        }
+        return sendingQueue.pop();
+    }
 
+    public void addMessageToDisplay (String message) {
+        displayingList.add(message);
     }
 }

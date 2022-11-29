@@ -1,5 +1,7 @@
 package pl.polsl.wojciech.siudy.messenger.model;
 
+import pl.polsl.wojciech.siudy.messenger.Exceptions.EmptyBoxException;
+
 import java.util.LinkedList;
 import java.util.Vector;
 

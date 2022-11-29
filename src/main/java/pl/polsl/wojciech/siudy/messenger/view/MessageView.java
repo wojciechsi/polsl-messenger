@@ -14,9 +14,11 @@ public class MessageView {
      * @param date date
      * @param content content
      */
-    public void displayMessage(String author, Date date, String content) {
-        System.out.println(author + " at: " + date + ":");
-        System.out.println(content);
+    public String displayMessage(String author, Date date, String content) {
+        String output = "";
+        output += (author + " at: " + date + ":" + '\n');
+        output += (content + '\n');
+        return output;
     }
 
     /**

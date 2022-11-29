@@ -24,6 +24,6 @@ public class MessageController {
     }
 
     public void updateView() {
-        view.displayMessage(userController.getUserName(), model.getDate(), model.getContent());
+        //view.displayMessage(userController.getUserName(), model.getDate(), model.getContent());
     }
 }

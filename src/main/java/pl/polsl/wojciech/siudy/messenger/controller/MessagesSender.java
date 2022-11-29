@@ -1,6 +1,6 @@
 package pl.polsl.wojciech.siudy.messenger.controller;
 
-import pl.polsl.wojciech.siudy.messenger.model.EmptyBoxException;
+import pl.polsl.wojciech.siudy.messenger.Exceptions.EmptyBoxException;
 import pl.polsl.wojciech.siudy.messenger.model.Session;
 
 import java.io.IOException;

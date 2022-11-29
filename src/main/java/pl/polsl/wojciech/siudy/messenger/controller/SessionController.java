@@ -1,9 +1,11 @@
 package pl.polsl.wojciech.siudy.messenger.controller;
 
+import pl.polsl.wojciech.siudy.messenger.Exceptions.EmptyBoxException;
 import pl.polsl.wojciech.siudy.messenger.model.Message;
 import pl.polsl.wojciech.siudy.messenger.model.Session;
 import pl.polsl.wojciech.siudy.messenger.model.User;
 import pl.polsl.wojciech.siudy.messenger.view.MessageView;
+import pl.polsl.wojciech.siudy.messenger.view.MessagesManager;
 import pl.polsl.wojciech.siudy.messenger.view.SessionView;
 
 /**
@@ -12,15 +14,17 @@ import pl.polsl.wojciech.siudy.messenger.view.SessionView;
 public class SessionController {
     private Session model;
     private SessionView view;
+    private MessagesManager messagesManager;
 
     /**
      * Class constructor.
-     * @param model data holder
+     * @param sessionModel data holder
      * @param sessionView frontend holder
      */
-    public SessionController(Session model, SessionView sessionView) {
-        this.model = model;
-        this.view = sessionView;
+    public SessionController(Session sessionModel, SessionView sessionView) {
+        model = sessionModel;
+        view = sessionView;
+        messagesManager = new MessagesManager();
     }
 
     /**
@@ -109,8 +113,48 @@ public class SessionController {
         model.addMessageToInbox(message);
     }
 
+    public void endSession() {
+        model.shutdown();
+    }
+
+    /**
+     * Method sending message with content specified.
+     * @param content to send
+     */
     public void sendMessage(String content) {
         sendMessage(new Message(model.getCurrentUser(), content));
     }
+
+    /**
+     * Method invoking messaging interface.
+     */
+    public void doMessaging() {
+        //invoke main messaging window
+        messagesManager.pack();
+        messagesManager.setVisible(true);
+        while (model.isAlive())
+        {
+            try {
+                model.addMessageToOutbox(new Message(model.getCurrentUser(), messagesManager.takeMessageToSend()));
+                Message currentMessage = model.getInbox().lastElement();
+                model.getInbox().remove(model.getInbox().size() - 1); //perform quasi-pop
+                                                                            //because another container was used
+                MessageView currentMessageView = new MessageView();
+                messagesManager.addMessageToDisplay(currentMessageView.displayMessage(
+                        currentMessage.getAuthor().getName(), currentMessage.getDate(), currentMessage.getContent()
+                ));
+            }
+            catch (EmptyBoxException e) { //in case of no messages to show
+                try { //to wait a moment to keep the processor cool
+                    Thread.sleep(500);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
+
+
+    }
+
 
 }
