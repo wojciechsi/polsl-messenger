@@ -15,15 +15,14 @@ public class Session {
     private User currentUser;
     private String address;
     private Integer portIn, portOut;
-    private Vector<Message> inbox;
-    private LinkedList<Message> outbox;
+    private LinkedList<Message> outbox, inbox;
     boolean alive = true;
 
     /**
      * Method checking whenever session status wasn't set to shut down.
      * @return if is alive
      */
-    public boolean isAlive() {
+    public synchronized boolean isAlive() {
         return alive;
     }
 
@@ -39,8 +38,8 @@ public class Session {
         this.address = null;
         this.portIn = null;
         this.portOut = null;
-        this.inbox = new Vector<Message>();
-        this.outbox = new LinkedList<Message>();
+        this.inbox = new LinkedList<>();
+        this.outbox = new LinkedList<>();
     }
 
     /**
@@ -55,8 +54,8 @@ public class Session {
         this.address = address;
         this.portIn = portIn;
         this.portOut = portOut;
-        this.inbox = new Vector<Message>();
-        this.outbox = new LinkedList<Message>();
+        this.inbox = new LinkedList<>();
+        this.outbox = new LinkedList<>();
     }
 
     public void setCurrentUser(User currentUser) {
@@ -111,7 +110,7 @@ public class Session {
      * Method returning linked-list of received messages.
      * @return inbox
      */
-    public Vector<Message> getInbox() {
+    public LinkedList<Message> getInbox() {
         return inbox;
     }
 
@@ -161,6 +160,15 @@ public class Session {
         }
         else {
             return true;
+        }
+    }
+
+    public Message popLastMessageFromInbox() throws EmptyBoxException{
+        if (inbox.isEmpty()) {
+            throw new EmptyBoxException();
+        }
+        else {
+            return inbox.pop();
         }
     }
 }

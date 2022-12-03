@@ -27,7 +27,7 @@ class SessionTest {
         Message message = new Message(user, contentOfMessage);
         //WHEN
         session.addMessageToInbox(message);
-        String actualValue = session.getInbox().lastElement().getContent();
+        String actualValue = session.getInbox().getLast().getContent();
         //THEN
         assertEquals(contentOfMessage, actualValue, "Message not added to inbox");
     }

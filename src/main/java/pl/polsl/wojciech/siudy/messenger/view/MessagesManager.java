@@ -1,10 +1,13 @@
 package pl.polsl.wojciech.siudy.messenger.view;
 
 import pl.polsl.wojciech.siudy.messenger.Exceptions.EmptyBoxException;
+import pl.polsl.wojciech.siudy.messenger.model.Message;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
 import java.util.LinkedList;
+import java.util.Vector;
 
 
 public class MessagesManager extends JDialog {
@@ -14,13 +17,25 @@ public class MessagesManager extends JDialog {
     private JFormattedTextField messageField;
     private JButton buttonEXIT;
     private JTable inboxTable;
-    private JScrollPane inboxScroll = new JScrollPane(inboxTable);
+    private DefaultTableModel messagesTableModel;
+    private Vector<Vector<String>> tableData;
+    private LinkedList<String> sendingQueue;
 
-    private LinkedList<String> sendingQueue, displayingList;
+    public boolean isCancelled() {
+        return wasCancelled;
+    }
+
+    private boolean wasCancelled;
 
     public MessagesManager() {
+
+        setVisible(true);
+        wasCancelled = false;
+
         sendingQueue = new LinkedList();
-        displayingList = new LinkedList();
+        tableData= new Vector<>();
+
+        updateTableContent();
 
         //prepare window
         setContentPane(contentPane);
@@ -53,6 +68,30 @@ public class MessagesManager extends JDialog {
                 onExit();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        
+        
+        
+    }
+
+    private void updateTableContent() {
+        messagesTableModel = new DefaultTableModel() {
+            @Override
+            public int getRowCount() {
+                return tableData.size();
+            }
+
+            @Override
+            public int getColumnCount() {
+                return 3;
+            }
+
+            @Override
+            public Object getValueAt(int rowIndex, int columnIndex) {
+                return tableData.get(rowIndex).get(columnIndex);
+            }
+        };
+
+        inboxTable.setModel(messagesTableModel);
     }
 
     private void onSend() {
@@ -61,7 +100,7 @@ public class MessagesManager extends JDialog {
     }
 
     private void onExit() {
-        //sessionCtrl.endSession();
+        wasCancelled = true;
         dispose();
     }
 
@@ -76,7 +115,22 @@ public class MessagesManager extends JDialog {
         return sendingQueue.pop();
     }
 
-    public void addMessageToDisplay (String message) {
-        displayingList.add(message);
+    public void addMessageToDisplay (Message message) {
+        Vector<String>messageToAdd = new Vector<>(3);
+
+        messageToAdd.add(message.getAuthor().getName());
+        messageToAdd.add(message.getDate().toString());
+        messageToAdd.add(message.getContent());
+
+        tableData.add(messageToAdd);
+        System.out.println("Message from:" + message.getAuthor().getName() + "sent to screen");
+    }
+
+    public void retouch() {
+        //inboxTable.repaint();
+        messagesTableModel.fireTableDataChanged();
+        updateTableContent();
+        pack();
+        //repaint();
     }
 }

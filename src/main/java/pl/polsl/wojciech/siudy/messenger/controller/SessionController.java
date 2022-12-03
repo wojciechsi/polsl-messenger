@@ -18,17 +18,19 @@ public class SessionController {
 
     /**
      * Class constructor.
+     *
      * @param sessionModel data holder
-     * @param sessionView frontend holder
+     * @param sessionView  frontend holder
      */
     public SessionController(Session sessionModel, SessionView sessionView) {
         model = sessionModel;
         view = sessionView;
-        messagesManager = new MessagesManager();
+
     }
 
     /**
      * Method returning running username.
+     *
      * @return name
      */
     private String getUser() {
@@ -37,6 +39,7 @@ public class SessionController {
 
     /**
      * Method returning address that messages are sent to.
+     *
      * @return address
      */
     public String getAddress() {
@@ -45,18 +48,20 @@ public class SessionController {
 
     /**
      * Method returning listening port.
+     *
      * @return portIn
      */
-    public Integer getPortIn () {
+    public Integer getPortIn() {
         return model.getPortIn();
     }
 
     /**
      * Method returning outgoing port.
+     *
      * @return portOut
      */
-    public Integer getPortOut () {
-            return model.getPortOut();
+    public Integer getPortOut() {
+        return model.getPortOut();
     }
 
     /**
@@ -75,6 +80,7 @@ public class SessionController {
 
     /**
      * Method pushing message to frontend
+     *
      * @param m
      */
     private void getAndServeMessage(Message m) {
@@ -95,9 +101,9 @@ public class SessionController {
     }
 
 
-
     /**
      * Method giving access to session placeholder.
+     *
      * @return session
      */
     public Session getSession() {
@@ -106,9 +112,10 @@ public class SessionController {
 
     /**
      * Method adding message to outbox.
+     *
      * @param message message to send
      */
-    public void sendMessage (Message message) {
+    public void sendMessage(Message message) {
         model.addMessageToOutbox(message);
         model.addMessageToInbox(message);
     }
@@ -119,6 +126,7 @@ public class SessionController {
 
     /**
      * Method sending message with content specified.
+     *
      * @param content to send
      */
     public void sendMessage(String content) {
@@ -130,31 +138,40 @@ public class SessionController {
      */
     public void doMessaging() {
         //invoke main messaging window
-        messagesManager.pack();
-        messagesManager.setVisible(true);
-        while (model.isAlive())
-        {
+        messagesManager = new MessagesManager();
+
+        while (model.isAlive()) {
+            messagesManager.retouch();
             try {
-                model.addMessageToOutbox(new Message(model.getCurrentUser(), messagesManager.takeMessageToSend()));
-                Message currentMessage = model.getInbox().lastElement();
-                model.getInbox().remove(model.getInbox().size() - 1); //perform quasi-pop
-                                                                            //because another container was used
-                MessageView currentMessageView = new MessageView();
-                messagesManager.addMessageToDisplay(currentMessageView.displayMessage(
-                        currentMessage.getAuthor().getName(), currentMessage.getDate(), currentMessage.getContent()
-                ));
-            }
-            catch (EmptyBoxException e) { //in case of no messages to show
+                //get last incoming message
+                if(model.anyMessages()) {
+                    Message currentMessage = model.popLastMessageFromInbox();
+                    //transfer message from inbox to controller
+                    messagesManager.addMessageToDisplay(currentMessage);
+                }
+                //get outgoing message from view
+                String contentToSend = messagesManager.takeMessageToSend();
+                model.addMessageToOutbox(new Message(model.getCurrentUser(), contentToSend));
+
+                //check if user terminated
+                if (messagesManager.isCancelled()) {
+                    model.shutdown();
+                }
+            } catch (EmptyBoxException e) { //in case of no messages to show
                 try { //to wait a moment to keep the processor cool
-                    Thread.sleep(500);
+                    Thread.sleep(50);
                 } catch (InterruptedException ex) {
                     throw new RuntimeException(ex);
                 }
             }
         }
-
-
     }
-
-
 }
+
+
+
+
+
+
+
+
