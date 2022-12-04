@@ -90,18 +90,6 @@ public class SessionController {
     }
 
     /**
-     * Method pushing all incoming messages to frontend
-     */
-    public void displayMessages() {
-        if (model.anyMessages()) {
-            for (Message m : model.getInbox()) {
-                getAndServeMessage(m);
-            }
-        }
-    }
-
-
-    /**
      * Method giving access to session placeholder.
      *
      * @return session
@@ -118,19 +106,6 @@ public class SessionController {
     public void sendMessage(Message message) {
         model.addMessageToOutbox(message);
         model.addMessageToInbox(message);
-    }
-
-    public void endSession() {
-        model.shutdown();
-    }
-
-    /**
-     * Method sending message with content specified.
-     *
-     * @param content to send
-     */
-    public void sendMessage(String content) {
-        sendMessage(new Message(model.getCurrentUser(), content));
     }
 
     /**

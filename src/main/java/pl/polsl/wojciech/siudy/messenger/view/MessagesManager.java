@@ -73,6 +73,9 @@ public class MessagesManager extends JDialog {
         
     }
 
+    /**
+     * Method updating table.
+     */
     private void updateTableContent() {
         messagesTableModel = new DefaultTableModel() {
             @Override
@@ -94,20 +97,35 @@ public class MessagesManager extends JDialog {
         inboxTable.setModel(messagesTableModel);
     }
 
+    /**
+     * Send message when SENT clicked.
+     */
     private void onSend() {
         pushMessage(messageField.getText());
         messageField.setValue("");
     }
 
+    /**
+     * Exit when EXIT clicked.
+     */
     private void onExit() {
         wasCancelled = true;
         dispose();
     }
 
+    /**
+     * Add string message to sending queue.
+     * @param content of message to send
+     */
     private void pushMessage(String content) {
         sendingQueue.add(content);
     }
 
+    /**
+     * Get message to send
+     * @return contend of message to send.
+     * @throws EmptyBoxException
+     */
     public String takeMessageToSend() throws EmptyBoxException {
         if (sendingQueue.isEmpty()) {
             throw new EmptyBoxException();
@@ -115,6 +133,10 @@ public class MessagesManager extends JDialog {
         return sendingQueue.pop();
     }
 
+    /**
+     * Add message to display.
+     * @param message to add
+     */
     public void addMessageToDisplay (Message message) {
         Vector<String>messageToAdd = new Vector<>(3);
 
@@ -126,6 +148,9 @@ public class MessagesManager extends JDialog {
         System.out.println("Message from:" + message.getAuthor().getName() + "sent to screen");
     }
 
+    /**
+     * Refresh state of the window/
+     */
     public void retouch() {
         //inboxTable.repaint();
         messagesTableModel.fireTableDataChanged();
