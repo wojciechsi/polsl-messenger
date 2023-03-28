@@ -1,4 +1,5 @@
 # polsl-messenger
+University assignment. Java serverless peer-to-peer messaging app made basicly from scratch on web sockets.
 ## Run two instances of application
 ## Enter corresponding ports and addresses
 For example:
